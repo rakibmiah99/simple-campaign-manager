@@ -13,7 +13,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Send, Trash2, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Send, Trash2, CheckCircle2, XCircle, Clock, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/' },
@@ -49,6 +50,8 @@ const getRecipientStatusIcon = (status: 'pending' | 'sent' | 'failed') => {
 };
 
 export default function ShowCampaign({ campaign, stats }: Props) {
+    const [countdown, setCountdown] = useState(30);
+
     const handleSend = () => {
         if (confirm('Are you sure you want to send this campaign?')) {
             router.post(`/campaigns/${campaign.id}/send`);
@@ -60,6 +63,29 @@ export default function ShowCampaign({ campaign, stats }: Props) {
             router.delete(`/campaigns/${campaign.id}`);
         }
     };
+
+    // Auto-reload page every 30 seconds if campaign is not draft and has pending recipients
+    useEffect(() => {
+        if (campaign.status !== 'draft' && stats.pending > 0) {
+            setCountdown(30);
+
+            const countdownInterval = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev <= 1) return 30;
+                    return prev - 1;
+                });
+            }, 1000);
+
+            const reloadInterval = setInterval(() => {
+                router.reload({ only: ['campaign', 'stats'] });
+            }, 30000); // 30 seconds
+
+            return () => {
+                clearInterval(countdownInterval);
+                clearInterval(reloadInterval);
+            };
+        }
+    }, [campaign.status, stats.pending]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -85,6 +111,20 @@ export default function ShowCampaign({ campaign, stats }: Props) {
                         </Button>
                     </div>
                 </div>
+
+                {campaign.status !== 'draft' && stats.pending > 0 && (
+                    <div className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950">
+                        <div className="flex items-center gap-2">
+                            <RefreshCw className="h-4 w-4 animate-spin text-blue-600 dark:text-blue-400" />
+                            <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                Auto-refreshing... {stats.pending} email(s) pending
+                            </span>
+                        </div>
+                        <span className="text-sm text-blue-700 dark:text-blue-300">
+                            Next refresh in {countdown}s
+                        </span>
+                    </div>
+                )}
 
                 <div className="grid gap-4 md:grid-cols-4">
                     <Card>
