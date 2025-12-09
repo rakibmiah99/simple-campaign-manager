@@ -47,13 +47,11 @@ class SendCampaignEmailJob implements ShouldQueue
             $this->updateCampaignStatus();
         } catch (\Exception $e) {
             $this->recipient->update([
-                'status' => 'sent',
+                'status' => 'failed',
                 'error_message' => $e->getMessage(),
             ]);
 
             Log::error("Failed to send email to {$this->recipient->contact->email}: {$e->getMessage()}");
-
-            $this->updateCampaignStatus();
         }
     }
 
@@ -66,7 +64,7 @@ class SendCampaignEmailJob implements ShouldQueue
         if ($pending === 0) {
             $failed = $campaign->recipients()->where('status', 'failed')->count();
             $campaign->update([
-                'status' => $failed > 0 ? 'failed' : 'sent',
+                'status' => $failed > 0 ? 'sent' : 'sent'
             ]);
         }
     }
