@@ -2,6 +2,11 @@
 
 A minimal email campaign manager built with Laravel, React, InertiaJS, and shadcn/ui.
 
+## 🎥 Demo
+
+- **Live Demo**: [https://simple-campaign-manager.rakibmiah99.website](https://simple-campaign-manager.rakibmiah99.website)
+- **Video Preview**: [Watch Demo Video](https://simple-campaign-manager.rakibmiah99.website/scm.mp4)
+
 ## Features
 
 - 📧 **Contact Management**: Add, view, and manage email contacts
