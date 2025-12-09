@@ -16,4 +16,3 @@ Route::resource('contacts', ContactController::class)->only(['index', 'store', '
 Route::resource('campaigns', CampaignController::class);
 Route::post('campaigns/{campaign}/send', [CampaignController::class, 'send'])->name('campaigns.send');
 
-require __DIR__.'/settings.php';
