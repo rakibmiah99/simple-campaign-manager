@@ -2,14 +2,24 @@ import { NavMain } from '@/components/nav-main';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import {  LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Users, Mail } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Contacts',
+        href: '/contacts',
+        icon: Users,
+    },
+    {
+        title: 'Campaigns',
+        href: '/campaigns',
+        icon: Mail,
     },
 ];
 
